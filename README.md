@@ -76,6 +76,10 @@
 
 ## Roadmap
 
+- [ ] H2 and SQLite database support
+- [ ] Prefix command support
+- [ ] Multiple guild support per instance
+
 See the [open issues](https://github.com/hyscript7/locketutils/issues) for a list of proposed features (and known issues).
 
 - [Top Feature Requests](https://github.com/hyscript7/locketutils/issues?q=label%3Aenhancement+is%3Aopen+sort%3Areactions-%2B1-desc) (Add your votes using the 👍 reaction)
