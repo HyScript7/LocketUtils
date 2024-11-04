@@ -42,9 +42,10 @@ public class WhitelistCommand implements ICommand {
             event.getHook().sendMessage("You do not have permission to use this command!").queue();
             return;
         }
+        User user;
         switch (event.getSubcommandName()) {
             case "add":
-                User user = event.getOption("user").getAsUser();
+                user = event.getOption("user").getAsUser();
                 OptionMapping reasonOption = event.getOption("reason");
                 String reason = reasonOption != null ? reasonOption.getAsString() : "No reason specified.";
                 log.info("Reason: {}", reason);
@@ -52,7 +53,8 @@ public class WhitelistCommand implements ICommand {
                     event.getHook().sendMessage("User is already whitelisted").queue();
                     return;
                 }
-                whitelistService.addToWhitelist(user, event.getUser());
+                // whitelistService.addToWhitelist(user, event.getUser());
+                whitelistService.addToWhitelistWithReason(user, event.getUser(), reason);
                 jdaLoggingService.log(event.getJDA(), "Whitelist Add",
                         "User " + user.getAsMention() + " (" + user.getId() + ")" + " was added to the whitelist by "
                                 + event.getUser().getAsMention() + "(" + event.getUser().getId() + ")");
