@@ -3,6 +3,7 @@ package io.github.hyscript7.locketutils.commands;
 import org.springframework.stereotype.Component;
 
 import io.github.hyscript7.locketutils.config.LocketutilsConfiguration;
+import io.github.hyscript7.locketutils.data.models.WhitelistModel;
 import io.github.hyscript7.locketutils.data.services.WhitelistService;
 import io.github.hyscript7.locketutils.services.JDALoggingService;
 import lombok.extern.slf4j.Slf4j;
@@ -75,9 +76,17 @@ public class WhitelistCommand implements ICommand {
                 event.getGuild().kick(user).reason("Removed from whitelist").queue();
                 break;
             case "list":
-                // TODO: Implement
                 int page = event.getOption("page") != null ? event.getOption("page").getAsInt() : 1;
-                event.getHook().sendMessage("Not yet implemented! Your specified page: " + page).queue();
+                page -= 1; // 0-indexed
+                long count = whitelistService.count();
+                int totalPages = (int) Math.ceil((double) count / WhitelistService.PAGE_SIZE);
+                StringBuilder messageBuilder = new StringBuilder();
+                messageBuilder.append("Page ").append(page).append("/").append(totalPages).append("\n");
+                for (WhitelistModel model : whitelistService.getAll(page)) {
+                    messageBuilder.append(formatWhitelistModel(model)).append("\n");
+                }
+                String message = messageBuilder.toString();
+                event.getHook().sendMessage(message).queue();
                 break;
             case "reason":
                 user = event.getOption("user").getAsUser();
@@ -113,5 +122,9 @@ public class WhitelistCommand implements ICommand {
                 new SubcommandData("reason", "Let's you view or change the reason someone was whitelisted")
                         .addOption(OptionType.USER, "user", "The user to work with", true)
                         .addOption(OptionType.STRING, "reason", "The new reason", false));
+    }
+
+    private String formatWhitelistModel(WhitelistModel model) {
+        return "<@" + model.getId() + "> (" + model.getId() + ") has been whitelisted by <@" + model.getAddedBy() + "> (" + model.getAddedBy() + ") with reason:\n```\n" + model.getReason() + "\n```";
     }
 }

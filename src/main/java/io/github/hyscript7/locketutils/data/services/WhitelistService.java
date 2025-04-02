@@ -1,20 +1,27 @@
 package io.github.hyscript7.locketutils.data.services;
 
 import java.util.Date;
+import java.util.List;
 
 import io.github.hyscript7.locketutils.data.models.WhitelistModel;
+import io.github.hyscript7.locketutils.data.repositories.PagingWhitelistRepository;
 import io.github.hyscript7.locketutils.data.repositories.WhitelistRepository;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 
 @Service
 public class WhitelistService {
+    public static int PAGE_SIZE = 10;
+    
     private WhitelistRepository whitelistRepository;
+    private PagingWhitelistRepository pagingWhitelistRepository;
 
-    public WhitelistService(WhitelistRepository whitelistRepository) {
+    public WhitelistService(WhitelistRepository whitelistRepository, PagingWhitelistRepository pagingWhitelistRepository) {
         this.whitelistRepository = whitelistRepository;
+        this.pagingWhitelistRepository = pagingWhitelistRepository;
     }
 
     public boolean isWhitelisted(User user) {
@@ -113,5 +120,9 @@ public class WhitelistService {
 
     public long count() {
         return whitelistRepository.count();
+    }
+
+    public List<WhitelistModel> getAll(int page) {
+        return pagingWhitelistRepository.findAll(PageRequest.of(page, PAGE_SIZE)).toList();
     }
 }
